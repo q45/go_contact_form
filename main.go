@@ -37,6 +37,12 @@ func send(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := msg.Deliver(); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/confirmation", http.StatusSeeOther)
 	//send message in an email
 	//Redirect to confirmation page
 }

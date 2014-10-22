@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"net/smtp"
 	"regexp"
 	"strings"
 )
@@ -25,4 +27,16 @@ func (msg *Message) Validate() bool {
 	}
 
 	return len(msg.Errors) == 0
+}
+
+func (msg *Message) Deliver() error {
+	to := []string{"someone@example.com"}
+	body := fmt.Sprintf("Reply-to: %v\r\nSubject: New Message\r\n%v", msg.Email, msg.Content)
+
+	username := "quintinsmith@gmail.com"
+	password := "Samita@20"
+	auth := smtp.PlainAuth("", username, password, "smtp.gmail.com")
+
+	return smtp.SendMail("smtp.gmail.com:587", auth, msg.Email, to, []byte(body))
+
 }
